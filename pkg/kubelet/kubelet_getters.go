@@ -278,6 +278,16 @@ func (kl *Kubelet) getHostIPAnyWay() (net.IP, error) {
 	return utilnode.GetNodeHostIP(node)
 }
 
+// getHostInternalIPsAnyWay attempts to return the host internal IPs from kubelet's nodeInfo, or
+// the initialNode.
+func (kl *Kubelet) getHostInternalIPsAnyWay() ([]net.IP, error) {
+	node, err := kl.getNodeAnyWay()
+	if err != nil {
+		return nil, err
+	}
+	return utilnode.GetNodeHostInternalIPs(node)
+}
+
 // GetExtraSupplementalGroupsForPod returns a list of the extra
 // supplemental groups for the Pod. These extra supplemental groups come
 // from annotations on persistent volumes that the pod depends on.

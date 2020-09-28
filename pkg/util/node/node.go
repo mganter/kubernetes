@@ -108,6 +108,28 @@ func GetNodeHostIP(node *v1.Node) (net.IP, error) {
 	return nil, fmt.Errorf("host IP unknown; known addresses: %v", addresses)
 }
 
+// GetNodeHostIP returns all provided node's IP, sorted based on:
+// 1. NodeInternalIP
+// 2. NodeExternalIP
+func GetNodeHostInternalIPs(node *v1.Node) ([]net.IP, error) {
+	addresses := node.Status.Addresses
+	addressMap := make(map[v1.NodeAddressType][]v1.NodeAddress)
+	retAddresses := make([]net.IP, 0)
+	for i := range addresses {
+		addressMap[addresses[i].Type] = append(addressMap[addresses[i].Type], addresses[i])
+	}
+
+	for _, address := range addressMap[v1.NodeInternalIP] {
+		retAddresses = append(retAddresses, net.ParseIP(address.Address))
+	}
+
+	if len(retAddresses) > 0 {
+		return retAddresses, nil
+	}
+
+	return nil, fmt.Errorf("host IP unknown; known addresses: %v", addresses)
+}
+
 // GetNodeIP returns the ip of node with the provided hostname
 // If required, wait for the node to be defined.
 func GetNodeIP(client clientset.Interface, hostname string) net.IP {

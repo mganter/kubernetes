@@ -1531,14 +1531,19 @@ func (kl *Kubelet) generateAPIPodStatus(pod *v1.Pod, podStatus *kubecontainer.Po
 	})
 
 	if kl.kubeClient != nil {
-		hostIP, err := kl.getHostIPAnyWay()
+		hostIPs, err := kl.getHostInternalIPsAnyWay()
 		if err != nil {
 			klog.V(4).Infof("Cannot get host IP: %v", err)
 		} else {
-			s.HostIP = hostIP.String()
+			s.HostIP = hostIPs[0].String()
 			if kubecontainer.IsHostNetworkPod(pod) && s.PodIP == "" {
-				s.PodIP = hostIP.String()
-				s.PodIPs = []v1.PodIP{{IP: s.PodIP}}
+				s.PodIP = hostIPs[0].String()
+
+				podIPs := make([]v1.PodIP, 0)
+				for _, ip := range hostIPs {
+					podIPs = append(podIPs, v1.PodIP{IP: ip.String()})
+				}
+				s.PodIPs = podIPs
 			}
 		}
 	}

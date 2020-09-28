@@ -281,9 +281,9 @@ func (kl *Kubelet) getHostIPAnyWay() (net.IP, error) {
 	return utilnode.GetNodeHostIP(node)
 }
 
-// getHostIPsAnyWay attempts to return the host IPs from kubelet's nodeInfo, or
+// getHostInternalIPsAnyWay attempts to return the host internal IPs from kubelet's nodeInfo, or
 // the initialNode.
-func (kl *Kubelet) getHostIPsAnyWay() ([]net.IP, error) {
+func (kl *Kubelet) getHostInternalIPsAnyWay() ([]net.IP, error) {
 	node, err := kl.getNodeAnyWay()
 	if err != nil {
 		return nil, err

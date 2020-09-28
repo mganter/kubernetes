@@ -1531,7 +1531,7 @@ func (kl *Kubelet) generateAPIPodStatus(pod *v1.Pod, podStatus *kubecontainer.Po
 	})
 
 	if kl.kubeClient != nil {
-		hostIPs, err := kl.getHostIPsAnyWay()
+		hostIPs, err := kl.getHostInternalIPsAnyWay()
 		if err != nil {
 			klog.V(4).Infof("Cannot get host IP: %v", err)
 		} else {
